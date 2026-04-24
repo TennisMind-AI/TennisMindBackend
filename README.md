@@ -48,8 +48,22 @@ All values are stored as JSON strings.
 
 ## Run API
 
+For local-only testing:
+
 ```bash
 uvicorn app:app --reload
+```
+
+For other machines or deployed services to connect:
+
+```bash
+uvicorn app:app --host 0.0.0.0 --port 8000
+```
+
+On platforms that provide a dynamic port, use:
+
+```bash
+uvicorn app:app --host 0.0.0.0 --port %PORT%
 ```
 
 Trigger the agent:
@@ -57,19 +71,36 @@ Trigger the agent:
 ```bash
 curl -X POST http://127.0.0.1:8000/trigger ^
   -H "Content-Type: application/json" ^
-  -d "{\"event_id\":\"evt-1\",\"timestamp\":\"2026-04-24T12:00:00Z\",\"type\":\"serve\",\"payload\":{\"value\":91,\"context\":\"serve practice\"}}"
+  -d "{\"user_id\":\"user-123\",\"event_id\":\"evt-1\",\"timestamp\":\"2026-04-24T12:00:00Z\",\"type\":\"analysis_feedback\",\"payload\":{\"value\":91,\"context\":\"summary=serve practice; issues=serve too wide\"}}"
 ```
 
 Check logs:
 
 ```bash
-curl http://127.0.0.1:8000/logs
+curl "http://127.0.0.1:8000/logs?user_id=user-123"
 ```
 
 Check state:
 
 ```bash
-curl http://127.0.0.1:8000/state
+curl "http://127.0.0.1:8000/state?user_id=user-123"
+```
+
+### Trigger Schema
+
+Send this shape from `analysis-agent`:
+
+```json
+{
+  "user_id": "user-123",
+  "event_id": "uuid-or-any-id",
+  "timestamp": "2026-04-24T12:00:00Z",
+  "type": "analysis_feedback",
+  "payload": {
+    "value": 0.92,
+    "context": "summary=Player hitting forehand; issues=unstable base; coaching_tips=stay balanced; latest_text=..."
+  }
+}
 ```
 
 ## Run Repeated Event Demo
