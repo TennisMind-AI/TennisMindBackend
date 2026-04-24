@@ -10,25 +10,32 @@ pip install -r requirements.txt
 
 ## Redis Config
 
-Redis connection settings live in `config.json`:
+Redis connection settings live in `.env`:
 
-```json
-{
-  "redis": {
-    "host": "redis-11081.c60.us-west-1-2.ec2.cloud.redislabs.com",
-    "port": 11081,
-    "decode_responses": true,
-    "username": "default",
-    "password": "your-password"
-  }
-}
+```env
+REDIS_HOST=redis-11081.c60.us-west-1-2.ec2.cloud.redislabs.com
+REDIS_PORT=11081
+REDIS_DECODE_RESPONSES=true
+REDIS_USERNAME=default
+REDIS_PASSWORD=your-password
 ```
 
 To use another config file:
 
 ```bash
-set REDIS_CONFIG_PATH=path\to\config.json
+set REDIS_CONFIG_PATH=path\to\.env
 ```
+
+By default, the app uses this path:
+
+```python
+REDIS_CONFIG_PATH = os.getenv(
+    "REDIS_CONFIG_PATH",
+    os.path.join(os.path.dirname(__file__), ".env"),
+)
+```
+
+That means deploy commands do not depend on the current working directory.
 
 ## Memory Keys
 

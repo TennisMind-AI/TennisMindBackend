@@ -5,6 +5,10 @@ from typing import Any, List, Optional
 
 
 redis_client = None
+REDIS_CONFIG_PATH = os.getenv(
+    "REDIS_CONFIG_PATH",
+    os.path.join(os.path.dirname(__file__), ".env"),
+)
 INTERVAL_BY_COUNT = {
     1: 1,
     2: 3,
@@ -91,10 +95,22 @@ def _get_client():
 
 
 def _load_redis_config() -> Any:
-    config_path = os.getenv("REDIS_CONFIG_PATH", "config.json")
-    with open(config_path, "r", encoding="utf-8") as config_file:
-        config = json.load(config_file)
-    return config["redis"]
+    config = {}
+    with open(REDIS_CONFIG_PATH, "r", encoding="utf-8") as config_file:
+        for line in config_file:
+            stripped_line = line.strip()
+            if not stripped_line or stripped_line.startswith("#"):
+                continue
+            key, value = stripped_line.split("=", 1)
+            config[key.strip()] = value.strip().strip('"').strip("'")
+
+    return {
+        "host": config["REDIS_HOST"],
+        "port": int(config["REDIS_PORT"]),
+        "decode_responses": config.get("REDIS_DECODE_RESPONSES", "true").lower() == "true",
+        "username": config.get("REDIS_USERNAME"),
+        "password": config.get("REDIS_PASSWORD"),
+    }
 
 
 def _set_json(key: str, value: Any) -> None:
