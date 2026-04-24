@@ -1,0 +1,9 @@
+{
+  "redis": {
+    "host": "redis-11081.c60.us-west-1-2.ec2.cloud.redislabs.com",
+    "port": 11081,
+    "decode_responses": true,
+    "username": "default",
+    "password": "qHngLoRnieYoJ8gINmFl8UIzErh7Nwjs"
+  }
+}

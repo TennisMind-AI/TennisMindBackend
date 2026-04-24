@@ -78,10 +78,23 @@ def _get_client():
     if redis_client is None:
         import redis
 
-        redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-        redis_client = redis.Redis.from_url(redis_url)
+        redis_config = _load_redis_config()
+        redis_client = redis.Redis(
+            host=redis_config["host"],
+            port=int(redis_config["port"]),
+            decode_responses=bool(redis_config.get("decode_responses", True)),
+            username=redis_config.get("username"),
+            password=redis_config.get("password"),
+        )
 
     return redis_client
+
+
+def _load_redis_config() -> Any:
+    config_path = os.getenv("REDIS_CONFIG_PATH", "config.json")
+    with open(config_path, "r", encoding="utf-8") as config_file:
+        config = json.load(config_file)
+    return config["redis"]
 
 
 def _set_json(key: str, value: Any) -> None:

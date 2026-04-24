@@ -8,10 +8,26 @@ Minimal Redis memory module for a tennis coaching AI.
 pip install -r requirements.txt
 ```
 
-Make sure Redis is running locally:
+## Redis Config
+
+Redis connection settings live in `config.json`:
+
+```json
+{
+  "redis": {
+    "host": "redis-11081.c60.us-west-1-2.ec2.cloud.redislabs.com",
+    "port": 11081,
+    "decode_responses": true,
+    "username": "default",
+    "password": "your-password"
+  }
+}
+```
+
+To use another config file:
 
 ```bash
-redis-server
+set REDIS_CONFIG_PATH=path\to\config.json
 ```
 
 ## Memory Keys
